@@ -4,4 +4,4 @@
 
 using TokenSet = std::list<std::pair<std::string, std::string>>;
 
-TokenSet tokenize(const std::string& path, const LexSpec& spec);
+TokenSet tokenize(std::ifstream& in, const LexSpec& spec);

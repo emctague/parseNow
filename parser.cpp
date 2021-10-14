@@ -19,6 +19,7 @@ shared_ptr<ASTNode> matchGrammar(const Grammar& g, const string &rule, TokenSet 
     for (auto& variant : g.at(rule)) {
         auto ts = tokens;
         auto res = matchGrammarVariant(g, rule, variant.first, ts);
+        if (!res) continue;
         if (!longestVariant || res->length > longestVariant->length) {
             longestVariant = res;
             longestTokens = ts;

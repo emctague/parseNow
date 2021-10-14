@@ -1,17 +1,15 @@
 #include "lexer.h"
 using namespace std;
 
-TokenSet tokenize(const string &path, const LexSpec &spec)
+TokenSet tokenize(std::ifstream &in, const LexSpec &spec)
 {
     TokenSet tokens;
-    std::ifstream in(path, std::ios::ate);
-    assert(in.is_open());
 
+    in.seekg(0, std::ios::end);
     size_t codeLen = in.tellg();
     in.seekg(0, std::ios::beg);
     std::string code(codeLen, ' ');
     in.read(code.data(), (streamsize)codeLen);
-    in.close();
 
     while (!code.empty()) {
         size_t longestMatch = 0;

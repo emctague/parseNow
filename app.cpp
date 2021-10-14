@@ -9,13 +9,40 @@ using json = nlohmann::json;
 
 json toJSON(const shared_ptr<ASTNode>& node);
 
-int main()
+int main(int argc, char **argv)
 {
-    std::ifstream in("../rules.txt");
+    if (argc != 3) {
+        std::cerr << "Usage: " << argv[0] << " [rules-file] [source-file]" << std::endl;
+        return 1;
+    }
+
+    std::ifstream in(argv[1]);
+    if (!in.is_open()) {
+        std::cerr << "Unable to open: " << argv[1] << std::endl;
+        return 2;
+    }
     auto lexSpec = parseLexSpec(in);
-    auto tokens = tokenize("../test.txt", lexSpec);
     auto grammar = parseGrammar(in);
+    in.close();
+
+    in.open(argv[2]);
+    if (!in.is_open()) {
+        std::cerr << "Unable to open: " << argv[2] << std::endl;
+        return 3;
+    }
+    auto tokens = tokenize(in, lexSpec);
+    in.close();
+
     auto results = matchGrammar(grammar, "root", tokens);
+    if (!results) {
+        std::cerr << "Failed to match any grammar rules" << std::endl;
+        return 4;
+    }
+
+    if (!tokens.empty()) {
+        std::cerr << "Didn't consume every token: " << tokens.size() << " remaining!" << std::endl;
+        return 5;
+    }
     std::cout << toJSON(results).dump(4) << std::endl;
 }
 
