@@ -57,7 +57,7 @@ keyvalue _ : LBRACE key:KEYWORD value:INTEGER RBRACE
 # We can differentiate between multiple versions of a nonterminal
 # based on their "variant" name, e.g. 'multi' or 'stop'. This is
 # included in the output AST node's _variant property. If we don't care
-# or only have one variataion we might use `_`.
+# or only have one variant we might use `_`.
 #
 # The special '+' prefix on an element means we want to flatten
 # the resulting AST node into this one, which is useful for building
