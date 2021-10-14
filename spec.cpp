@@ -11,8 +11,10 @@ LexSpec parseLexSpec(ifstream& in)
         if (str == "END LEX") break;
         stringstream ss(str);
 
-        string key, value;
-        ss >> key;
+        string key, separator, value;
+        ss >> key >> separator;
+        if (separator != "<-") throw std::runtime_error("Expected <- separator in line: " + str);
+
         getline(ss, value);
         value.erase(value.begin(), std::find_if(value.begin(), value.end(), [](char c) { return !std::isspace(c); }));
 
@@ -32,9 +34,9 @@ Grammar parseGrammar(ifstream& in)
         if (str.empty() || str[0] == '#') continue;
         stringstream ss(str);
 
-        string rule, variant, colon;
-        ss >> rule >> variant >> colon;
-        assert(colon == ":");
+        string rule, variant, separator;
+        ss >> rule >> variant >> separator;
+        if (separator != "<-") throw std::runtime_error("Expected <- separator in line: " + str);
 
         if (!grammar.contains(rule)) grammar[rule] = {};
 

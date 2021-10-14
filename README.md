@@ -1,6 +1,6 @@
 # parseNow
 
-This is a combined lexer and parser that reads grammar rules from
+This is a combined lexer and top-down parser that reads grammar rules from
 a definition file, uses those grammar rules to parse a second input
 file, and outputs a JSON syntax tree for the parsed input.
 
@@ -36,39 +36,32 @@ pairs in the form `( alphabetic-key numeric-value )`:
 ```
 # The stuff down here is lexer definitions as regexes.
 # The LONGEST match is used to construct each token.
-KEYWORD [a-z][a-z0-9]+
-# This is a comment line. They can appear anywhere in the file.
-LBRACE \(
-RBRACE \)
-INTEGER [0-9]+
+KEYWORD <- [a-z][a-z0-9]+
+LBRACE  <- \(
+RBRACE  <- \)
+INTEGER <- [0-9]+
+*       <- [ \t\r\n]
 # The special '*' token type is used to discard values without error
-* [ \t\r\n]
 
 # This means the lexing section is done:
 END LEX
 
 # Grammar Rules
 
-# When we want to see the value of a token in the output parse tree,
-# we provide a name for that token to be stored in
-# (e.g. "key" and "value" here).
-keyvalue _ : LBRACE key:KEYWORD value:INTEGER RBRACE
+# If we care about the value of a symbol in our rule, we can store
+# it in our JSON by prefixing it 'name:', e.g. 'key:' or 'value:'.
+keyvalue _ <- LBRACE key:KEYWORD value:INTEGER RBRACE
 
-# We can differentiate between multiple versions of a nonterminal
-# based on their "variant" name, e.g. 'multi' or 'stop'. This is
-# included in the output parse tree node's _variant property. If we don't care
-# or only have one variant we might use `_`.
-#
-# The special '+' prefix on an element means we want to flatten
-# the resulting parse tree node into this one, which is useful for building
-# lists such as the 'sets' list we're making here!
-sets multi : sets:keyvalue +sets
-sets stop  :
+# We can have multiple named 'variants' of a rule, e.g. 'multi' or
+# 'stop'. This gets put into '_variant' on the JSON parse tree node.
+# (By convention we use '_' when there is only one variant.)
+sets multi <- sets:keyvalue +sets
+sets stop  <-
 
-# root is the rule applied to the whole input file.
-# We use '+' again here to flatten so the resulting parse tree is more
-# readable.
-root _ : +sets
+# 'root' is applied to the whole input file.
+# '+sets' FLATTENS sets, merging its values into this node to reduce
+# nesting. We also used it above to make a list via recursive parsing.
+root _ <- +sets
 ```
 
 ## Parse Tree Format
