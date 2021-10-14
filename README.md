@@ -41,7 +41,7 @@ LBRACE  <- \(
 RBRACE  <- \)
 INTEGER <- [0-9]+
 *       <- [ \t\r\n]
-# The special '*' token type is used to discard values without error
+# '*' type is used to discard values without error.
 
 # This means the lexing section is done:
 END LEX
