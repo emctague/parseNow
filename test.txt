@@ -1,0 +1,12 @@
+Token {
+	otherToken: 12
+	aToken: 24.0 foo: "This is a \"test string\" that I wrote!"
+	aPropertyHoldsAToken: SomeToken {
+		ChildToken {
+			oopsAProperty: "Nice"
+		}
+	}
+	NestedToken {
+		EmptyNestedToken { }
+	}
+}

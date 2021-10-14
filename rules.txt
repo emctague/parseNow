@@ -1,0 +1,31 @@
+# Example lexing and parsing rules file that parses a syntax resembling QML
+
+KEYWORD [a-z][a-z0-9]+
+LBRACE \{
+RBRACE \}
+LBRACKET \[
+RBRACKET \]
+COLON :
+STRING "(?:[^"\\]|(\\[^\n\r]))*"
+FLOAT [0-9]*\.[0-9]+
+INTEGER [0-9]+
+* [ \t\r\n]
+
+END LEX
+
+elements multi : elements:element +elements
+elements stop  :
+
+element _ : name:KEYWORD LBRACE +assignments +elements RBRACE
+
+value str     : value:STRING
+value int     : value:INTEGER
+value float   : value:FLOAT
+value element : value:element
+
+assignment _ : name:KEYWORD COLON value:value
+
+assignments multi : assignments:assignment +assignments
+assignments stop  :
+
+root _ : +elements
