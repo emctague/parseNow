@@ -4,6 +4,21 @@ This is a combined lexer and parser that reads grammar rules from
 a definition file, uses those grammar rules to parse a second input
 file, and outputs a JSON syntax tree for the parsed input.
 
+## Usage
+
+```
+$ parseNow [rules-file] [input-file]
+```
+
+## Compilation
+
+1. Install [nlohmann::json](https://github.com/nlohmann/json) where CMake can find it
+   (recommend using vcpkg for this.)
+2. `mkdir build`
+3. `cd build`
+4. `cmake ..`
+
+
 ## Grammar File Format
 
 The grammar file consists of:
