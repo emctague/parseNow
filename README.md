@@ -49,38 +49,38 @@ END LEX
 
 # Grammar Rules
 
-# When we want to see the value of a token in the output AST,
+# When we want to see the value of a token in the output parse tree,
 # we provide a name for that token to be stored in
 # (e.g. "key" and "value" here).
 keyvalue _ : LBRACE key:KEYWORD value:INTEGER RBRACE
 
 # We can differentiate between multiple versions of a nonterminal
 # based on their "variant" name, e.g. 'multi' or 'stop'. This is
-# included in the output AST node's _variant property. If we don't care
+# included in the output parse tree node's _variant property. If we don't care
 # or only have one variant we might use `_`.
 #
 # The special '+' prefix on an element means we want to flatten
-# the resulting AST node into this one, which is useful for building
+# the resulting parse tree node into this one, which is useful for building
 # lists such as the 'sets' list we're making here!
 sets multi : sets:keyvalue +sets
 sets stop  :
 
 # root is the rule applied to the whole input file.
-# We use '+' again here to flatten so the resulting AST is more
+# We use '+' again here to flatten so the resulting parse tree is more
 # readable.
 root _ : +sets
 ```
 
-## AST Format
+## Parse Tree Format
 
-The resulting AST is a sequence of nested JSON objects in the form:
+The resulting parse tree is a sequence of nested JSON objects in the form:
 
 ```json
 {
   "_type": "<rule-name>",
   "_variant": "<variant-name>",
   "<any-saved-key-name>": [
-    ...nested AST objects, or strings representing the captured
+    ...nested parse tree nodes, or strings representing the captured
     value of terminal/tokens. 
   ]
 }

@@ -7,7 +7,7 @@
 using namespace std;
 using json = nlohmann::json;
 
-json toJSON(const shared_ptr<ASTNode>& node);
+json toJSON(const shared_ptr<ParseNode>& node);
 
 int main(int argc, char **argv)
 {
@@ -46,7 +46,7 @@ int main(int argc, char **argv)
     std::cout << toJSON(results).dump(4) << std::endl;
 }
 
-json toJSON(const shared_ptr<ASTNode>& node) {
+json toJSON(const shared_ptr<ParseNode>& node) {
     if (!node) { return nullptr; }
     if (!node->terminal.empty()) { return node->terminal; }
 

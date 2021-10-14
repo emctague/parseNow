@@ -1,15 +1,15 @@
 #include "parser.h"
 using namespace std;
 
-shared_ptr<ASTNode> matchGrammar(const Grammar& g, const string &rule, TokenSet &tokens)
+shared_ptr<ParseNode> matchGrammar(const Grammar& g, const string &rule, TokenSet &tokens)
 {
     if (!tokens.empty() && tokens.front().first == rule) {
         auto v = tokens.front();
         tokens.pop_front();
-        return make_shared<ASTNode>(ASTNode { rule, "", v.second, 1, {} });
+        return make_shared<ParseNode>(ParseNode {rule, "", v.second, 1, {} });
     }
 
-    shared_ptr<ASTNode> longestVariant = nullptr;
+    shared_ptr<ParseNode> longestVariant = nullptr;
     TokenSet longestTokens;
 
     /* This usually means we expect a token that isn't the next token, so this is a mismatch. */
@@ -31,10 +31,10 @@ shared_ptr<ASTNode> matchGrammar(const Grammar& g, const string &rule, TokenSet 
     return longestVariant;
 }
 
-std::shared_ptr<ASTNode>
+std::shared_ptr<ParseNode>
 matchGrammarVariant(const Grammar &g, const string &rule, const string &variant, TokenSet &tokens)
 {
-    shared_ptr<ASTNode> res = make_shared<ASTNode>(ASTNode { rule, variant, "", 0, {} });
+    shared_ptr<ParseNode> res = make_shared<ParseNode>(ParseNode {rule, variant, "", 0, {} });
     for (const auto& subRule : g.at(rule).at(variant)) {
         string ruleName = subRule;
         string ruleKey;
@@ -60,7 +60,7 @@ matchGrammarVariant(const Grammar &g, const string &rule, const string &variant,
     return res;
 }
 
-void ASTNode::merge(const ASTNode &other)
+void ParseNode::merge(const ParseNode &other)
 {
     for (auto& k : other.children) {
         if (!children.contains(k.first)) children[k.first] = {};
@@ -68,7 +68,7 @@ void ASTNode::merge(const ASTNode &other)
     }
 }
 
-void ASTNode::addChild(const string &key, shared_ptr<ASTNode> &value)
+void ParseNode::addChild(const string &key, shared_ptr<ParseNode> &value)
 {
     if (!children.contains(key)) children[key] = {};
     children[key].push_back(value);
