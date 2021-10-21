@@ -21,29 +21,38 @@ int main(int argc, char **argv)
         std::cerr << "Unable to open: " << argv[1] << std::endl;
         return 2;
     }
-    auto lexSpec = parseLexSpec(in);
-    auto grammar = parseGrammar(in);
-    in.close();
 
-    in.open(argv[2]);
-    if (!in.is_open()) {
-        std::cerr << "Unable to open: " << argv[2] << std::endl;
-        return 3;
-    }
-    auto tokens = tokenize(in, lexSpec);
-    in.close();
+    try
+    {
+        auto lexSpec = parseLexSpec(in);
+        auto grammar = parseGrammar(in);
+        in.close();
 
-    auto results = matchGrammar(grammar, "root", tokens);
-    if (!results) {
-        std::cerr << "Failed to match any grammar rules" << std::endl;
-        return 4;
-    }
+        in.open(argv[2]);
+        if (!in.is_open())
+        {
+            std::cerr << "Unable to open: " << argv[2] << std::endl;
+            return 3;
+        }
+        auto tokens = tokenize(in, lexSpec);
+        in.close();
 
-    if (!tokens.empty()) {
-        std::cerr << "Didn't consume every token: " << tokens.size() << " remaining!" << std::endl;
-        return 5;
+        auto results = matchGrammar(grammar, "root", tokens);
+        if (!results)
+        {
+            std::cerr << "Failed to match any grammar rules" << std::endl;
+            return 4;
+        }
+
+        if (!tokens.empty())
+        {
+            std::cerr << "Didn't consume every token: " << tokens.size() << " remaining!" << std::endl;
+            return 5;
+        }
+        std::cout << toJSON(results).dump(4) << std::endl;
+    } catch (const std::runtime_error& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
     }
-    std::cout << toJSON(results).dump(4) << std::endl;
 }
 
 json toJSON(const shared_ptr<ParseNode>& node) {
