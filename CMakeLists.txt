@@ -7,3 +7,4 @@ find_package(nlohmann_json CONFIG REQUIRED)
 
 add_executable(parseNow app.cpp lexer.cpp lexer.h spec.cpp spec.h parser.cpp parser.h)
 target_link_libraries(parseNow nlohmann_json nlohmann_json::nlohmann_json)
+install(TARGETS parseNow)
